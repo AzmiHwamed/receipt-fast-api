@@ -4,6 +4,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 
 from app.services.recommendation import (
+    recommend_expense,
     recommend_expense_type
 )
 
@@ -52,6 +53,18 @@ class RecommendationRequest(BaseModel):
             ]
         }
     }
+
+
+@router.post(
+    "/recommend-expense",
+    tags=["Recommendations"],
+    summary="Recommend an expense category and description in one AI request",
+)
+def recommend_combined(request: RecommendationRequest):
+    return recommend_expense(
+        expense_types=[item.model_dump() for item in request.expense_types],
+        expense=request.expense,
+    )
 
 
 
